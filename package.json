@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "marked": "^15.0.12"
+    "marked": "^15.0.12",
+    "puppeteer": "^24.10.1"
   }
 }

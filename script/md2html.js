@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { marked } from 'marked';
 
 // Get markdown file path from command line arguments
@@ -17,7 +17,10 @@ if (!htmlFile) {
 const md = readFileSync(mdFile, 'utf-8');
 const html = marked.parse(md);
 
-console.log(html);
+const fullHtml = `<!DOCTYPE html><html><body>${html}</body></html>`;
 
-// fs.writeFileSync(htmlFile, html);
-// console.log(`done: ${htmlFile}`);
+// console.log(html);
+
+
+writeFileSync(htmlFile, fullHtml);
+console.log(`done: ${htmlFile}`);
