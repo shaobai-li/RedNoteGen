@@ -1,5 +1,5 @@
-const fs = require('fs');
-const marked = require('marked');
+import { readFileSync } from 'fs';
+import { marked } from 'marked';
 
 // Get markdown file path from command line arguments
 const mdFile = process.argv[2];
@@ -14,7 +14,7 @@ if (!htmlFile) {
     htmlFile = mdFile.replace(/\.md$/, '.html');
 }
 
-const md = fs.readFileSync(mdFile, 'utf-8');
+const md = readFileSync(mdFile, 'utf-8');
 const html = marked.parse(md);
 
 console.log(html);
