@@ -18,6 +18,7 @@ const fullHtml = `<!DOCTYPE html><html><head><style>${css}</style></head><body>$
 
 puppeteer.launch().then(async (browser) => {
     const page = await browser.newPage();
+    await page.setViewport({ width: 1000, height: 1333 });
     await page.setContent(fullHtml);
     await page.screenshot({ path: pngFile });
     await browser.close();
