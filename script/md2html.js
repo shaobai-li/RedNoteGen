@@ -15,14 +15,17 @@ const md = readFileSync(mdFile, 'utf-8');
 const html = marked.parse(md);
 const css = readFileSync(cssFile, 'utf-8');
 const fullHtml = `<!DOCTYPE html><html><head><style>${css}</style></head><body>${html}</body></html>`;
+const htmlFile = mdFile.replace(/\.md$/, '.html');
+writeFileSync(htmlFile, fullHtml);
+console.log(`Generated HTML: ${htmlFile}`);
 
 puppeteer.launch().then(async (browser) => {
     const page = await browser.newPage();
-    await page.setViewport({ width: 1000, height: 1333 });
+    await page.setViewport({ width: 1000, height: 2000 });
     await page.setContent(fullHtml);
     await page.screenshot({ path: pngFile });
     await browser.close();
-    console.log(`done: ${pngFile}`);
+    console.log(`Generated PNG: ${pngFile}`);
 }).catch(err => {
     console.error('❌ Failed to render PNG:', err);
     process.exit(1);
