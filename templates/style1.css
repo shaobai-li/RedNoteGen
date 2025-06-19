@@ -18,14 +18,14 @@
     --font-size-h3: 2.3em;
     --font-size-h4: 2.1em;
     --font-size-p: 1.8em;
-    --font-size-code: 1.3em;
+    --font-size-code: 1.1em;
     --font-size-list: 1.3em;
   
     /* 📐 间距系统 */
-    --space-xs: 0.2em;      /* 增加基本间距 */
-    --space-sm: 0.5em;
-    --space-md: 0.8em;
-    --space-lg: 1.1em;
+    --space-xs: 0.3em;      /* 增加基本间距 */
+    --space-sm: 0.6em;
+    --space-md: 1.2em;
+    --space-lg: 1.5em;
   
     /* 📏 布局宽度 */
     --max-width-body: 860px;   /* 收紧内容宽度 */
@@ -115,7 +115,7 @@ pre {
   font-family: var(--font-mono);
   font-size: var(--font-size-code);
   border-radius: 4px;
-  margin: var(--space-sm) 0;
+  margin: var(--space-md) 0;
 }
 
 /* 行内代码样式 */
