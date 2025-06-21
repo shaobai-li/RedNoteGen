@@ -1,0 +1,44 @@
+<svg width="1000" height="1333" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <style>
+    @font-face {
+      font-family: 'SmileySans', sans-serif;
+      src: url('SmileySans-Oblique.ttf') format('truetype');
+    }
+
+    text {
+      font-family: 'SmileySans', sans-serif;
+    }
+  </style>
+
+  <!-- 背景 -->
+  <rect width="100%" height="100%" fill="#ffffff" />
+  
+  <!-- 主标题 -->
+  
+  <text x="900" y="1120" font-size="56" fill="#333" font-weight="500" text-anchor="end">- 提示词要求提取节点</text>
+  <text x="900" y="1200" font-size="56" fill="#333" font-weight="500" text-anchor="end">- AI生成Mermaid，再变流程图</text>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="10" dy="10" stdDeviation="10" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- 圆角矩形背景 -->
+  <rect x="50" y="100" width="900" height="820" 
+    rx="60" ry="60" 
+    fill="white" 
+    stroke="black" 
+    stroke-width="1"
+    filter="url(#shadow)"/>
+  
+  <!-- 图片元素 -->
+  <image x="670" y="140" width="250" height="250" xlink:href="./collections/mebrand_20250613_nobg.png" />
+  <line x1="70" y1="400" x2="930" y2="400" stroke="black" stroke-width="3"/>
+  <text x="80" y="440" font-size="28" fill="#333" font-weight="500">#用到了AI的工作笔记#</text>
+  <text x="580" y="440" font-size="28" fill="black">NOTE: No. 1</text>
+  <text x="750" y="440" font-size="28" fill="black">DATE: 2025-06-13</text>
+  
+  <text x="110" y="680" font-size="115" fill="#333" font-weight="500">用AI从SOP一步步</text>
+  <text x="110" y="830" font-size="115" fill="#333" font-weight="500">生成流程图</text>
+</svg> 

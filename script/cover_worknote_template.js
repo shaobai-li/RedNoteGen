@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { Resvg } from '@resvg/resvg-js';
+import path from 'path';
 
 // 动态变量
 const noteTitle = '#用到了AI的工作笔记#';
@@ -18,52 +19,43 @@ const collectionsImagePath = './collections/mebrand_20250613_nobg.png';
 
 const a = 50
 
-const svg = `
-<svg width="1000" height="1333" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <style>
-    @font-face {
-      font-family: 'SmileySans', sans-serif;
-      src: url('SmileySans-Oblique.ttf') format('truetype');
-    }
+// 读取SVG模板
+if (!process.argv[2]) {
+  console.error('请提供SVG模板文件路径作为命令行参数');
+  process.exit(1);
+}
+const templatePath = process.argv[2];
+let svg = fs.readFileSync(templatePath, 'utf-8');
 
-    text {
-      font-family: 'SmileySans', sans-serif;
-    }
-  </style>
+// 替换模板中的变量
+const variables = {
+  bgColor,
+  textColor,
+  accentColor,
+  collectionsImagePath,
+  noteTitle,
+  number,
+  title1,
+  title2,
+  subtitle1,
+  subtitle2,
+  date,
+  a
+};
 
-  <!-- 背景 -->
-  <rect width="100%" height="100%" fill="${bgColor}" />
-  
-  <!-- 主标题 -->
-  
-  <text x="900" y="1120" font-size="56" fill="${textColor}" font-weight="500" text-anchor="end">${subtitle1}</text>
-  <text x="900" y="1200" font-size="56" fill="${textColor}" font-weight="500" text-anchor="end">${subtitle2}</text>
+// 替换所有变量
+for (const [key, value] of Object.entries(variables)) {
+  const regex = new RegExp('\\${' + key + '}', 'g');
+  svg = svg.replace(regex, value);
+}
 
-  <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="10" dy="10" stdDeviation="10" flood-opacity="0.3"/>
-    </filter>
-  </defs>
-
-  <!-- 圆角矩形背景 -->
-  <rect x="50" y="${50 + a}" width="900" height="820" 
-    rx="60" ry="60" 
-    fill="white" 
-    stroke="black" 
-    stroke-width="1"
-    filter="url(#shadow)"/>
-  
-  <!-- 图片元素 -->
-  <image x="670" y="${90 + a}" width="250" height="250" xlink:href="${collectionsImagePath}" />
-  <line x1="70" y1="${350 + a}" x2="930" y2="${350 + a}" stroke="black" stroke-width="3"/>
-  <text x="80" y="${390 + a}" font-size="28" fill="${textColor}" font-weight="500">${noteTitle}</text>
-  <text x="580" y="${390 + a}" font-size="28" fill="black">${number}</text>
-  <text x="750" y="${390 + a}" font-size="28" fill="black">${date}</text>
-  
-  <text x="110" y="${630 + a}" font-size="115" fill="${textColor}" font-weight="500">${title1}</text>
-  <text x="110" y="${780 + a}" font-size="115" fill="${textColor}" font-weight="500">${title2}</text>
-</svg>`;
-
+// 替换表达式 ${50 + a}
+svg = svg.replace(/\${50 \+ a}/g, (50 + a).toString());
+svg = svg.replace(/\${90 \+ a}/g, (90 + a).toString());
+svg = svg.replace(/\${350 \+ a}/g, (350 + a).toString());
+svg = svg.replace(/\${390 \+ a}/g, (390 + a).toString());
+svg = svg.replace(/\${630 \+ a}/g, (630 + a).toString());
+svg = svg.replace(/\${780 \+ a}/g, (780 + a).toString());
 
 // 保存 SVG
 fs.writeFileSync('page_cover1.svg', svg, 'utf-8');
