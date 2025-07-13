@@ -5,6 +5,7 @@ from typing import Optional, List, Tuple
 from playwright.async_api import Cookie
 from signature import sign, get_search_id
 
+
 def convert_cookies(cookies: Optional[List[Cookie]]) -> Tuple[str, dict]:
 
     if not cookies:
@@ -17,7 +18,9 @@ def convert_cookies(cookies: Optional[List[Cookie]]) -> Tuple[str, dict]:
     return cookie_str, cookie_dict
 
 
-async def get_headers(browser_context, page, cookie_str, cookie_dict):
+
+
+async def get_headers(browser_context, page, uri, data, cookie_str, cookie_dict):
     
     # 请求头的初始化
     headers = dict()
