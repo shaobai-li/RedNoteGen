@@ -1,10 +1,11 @@
 import asyncio
 from playwright.async_api import async_playwright
 import os
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from playwright.async_api import Cookie
 from signature import sign, get_search_id
-
+import json
+import httpx
 
 def convert_cookies(cookies: Optional[List[Cookie]]) -> Tuple[str, dict]:
 
@@ -61,6 +62,24 @@ async def get_headers(browser_context, page, uri, data, cookie_str, cookie_dict)
 
 
 
+async def request(method, url, **kwargs):
+
+    return_response = kwargs.pop("return_response", False)
+
+    async with httpx.AsyncClient() as client:
+
+        response = await client.request(method, url=url, timeout=10, **kwargs)
+
+    if return_response:
+        return response.text
+    
+    data: Dict = response.json()
+
+    if data["success"]:
+        return data.get("data", data.get("success", {}))
+    else:
+        return None
+
 
 async def main():
     async with async_playwright() as playwright:
@@ -91,12 +110,12 @@ async def main():
         input("# 等待扫码登录，登录成功后按任意键继续...")
         print("# 登录成功...")
 
-
+        print("# 处理浏览器上下文(browser context)中的cookies")
         cookie_str, cookie_dict = convert_cookies(
             await browser_context.cookies()
         )
 
-                
+        print("# 准备数据和请求头...")
         search_id = get_search_id()
 
         uri = "/api/sns/web/v1/search/notes"
@@ -113,7 +132,19 @@ async def main():
 
         headers = await get_headers(browser_context, page, uri, data, cookie_str, cookie_dict)
 
+        json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
 
+        print("# 发送请求...")
+        note_res = await request(
+            method="POST",
+            url=f"https://edith.xiaohongshu.com{uri}",
+            data=json_str,
+            headers=headers
+        )
+
+
+        print("# 打印结果...")
+        print(note_res)
 
         input("# 按任意键退出...")
         print("# 退出...")
