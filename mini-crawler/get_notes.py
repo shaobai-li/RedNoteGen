@@ -3,6 +3,7 @@ from playwright.async_api import async_playwright
 import os
 from typing import Optional, List, Tuple
 from playwright.async_api import Cookie
+from signature import sign, get_search_id
 
 def convert_cookies(cookies: Optional[List[Cookie]]) -> Tuple[str, dict]:
 
@@ -30,7 +31,29 @@ async def get_headers(browser_context, page, cookie_str, cookie_dict):
             "Content-Type": "application/json;charset=UTF-8",
         }
     )    
-        
+    
+    encrypt_params = await page.evaluate(
+            "([url, data]) => window._webmsxyw(url,data)", [uri, data]
+        )
+
+    local_storage = await page.evaluate("() => window.localStorage")
+
+    signs = sign(
+        a1=cookie_dict.get("a1", ""),
+        b1=local_storage.get("b1", ""),
+        x_s=encrypt_params.get("X-s", ""),
+        x_t=str(encrypt_params.get("X-t", "")),
+    )
+
+    signs_for_headers = {
+        "X-S": signs["x-s"],
+        "X-T": signs["x-t"],
+        "x-S-Common": signs["x-s-common"],
+        "X-B3-Traceid": signs["x-b3-traceid"],
+    }
+
+    headers.update(signs_for_headers)
+
     return headers
 
 
@@ -70,9 +93,22 @@ async def main():
             await browser_context.cookies()
         )
 
+                
+        search_id = get_search_id()
+
+        uri = "/api/sns/web/v1/search/notes"
+
+        data = {
+            "keyword": "web3",
+            "page": 1,
+            "page_size": 20,
+            "search_id": search_id,
+            # "sort": sort.value,
+            # "note_type": note_type.value,
+        }
 
 
-
+        headers = await get_headers(browser_context, page, uri, data, cookie_str, cookie_dict)
 
 
 
