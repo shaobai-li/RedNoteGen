@@ -5,6 +5,10 @@ import asyncio
 from signature import get_search_id, sign
 import json
 import httpx
+import re
+import random
+import time
+
 
 class XHSClient:
 
@@ -67,6 +71,64 @@ class XHSClient:
         )
 
         return note_res
+
+    async def get_note_by_id(self, note_id: str, xsec_source: str, xsec_token: str):
+
+        crawl_interval = random.uniform(1,3)
+        time.sleep(crawl_interval)
+
+        url = (
+            "https://www.xiaohongshu.com/explore/"
+            + note_id
+            + f"?xsec_token={xsec_token}&xsec_source={xsec_source}"
+        )
+
+        #headers_copy = self.headers.copy()
+        #del headers_copy["Cookie"]
+
+        html = await self.request(
+            method="GET", 
+            url=url, 
+            return_response=True, 
+            headers=self.headers
+        )
+
+        def camel_to_underscore(key):
+            return re.sub(r"(?<!^)(?=[A-Z])", "_", key).lower()
+ 
+        def transform_json_keys(json_data):
+            data_dict = json.loads(json_data)
+            dict_new = {}
+            for key, value in data_dict.items():
+                new_key = camel_to_underscore(key)
+                if not value:
+                    dict_new[new_key] = value
+                elif isinstance(value, dict):
+                    dict_new[new_key] = transform_json_keys(json.dumps(value))
+                elif isinstance(value, list):
+                    dict_new[new_key] = [
+                        (
+                            transform_json_keys(json.dumps(item))
+                            if (item and isinstance(item, dict))
+                            else item
+                        )
+                        for item in value
+                    ]
+                else:
+                    dict_new[new_key] = value
+            return dict_new
+
+        def get_note_dict(html):
+            state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[0].replace("undefined", '""')
+
+            if state != "{}":
+                note_dict = transform_json_keys(state)
+                return note_dict["note"]["note_detail_map"][note_id]["note"]
+            return {}
+        
+        note_dict = get_note_dict(html)
+
+        return note_dict
 
     async def get_headers(self, uri: str, data):
         
